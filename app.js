@@ -37,11 +37,13 @@ function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
     return {
         salary: params.get('salary') || '',
-        period: params.get('period') || 'yearly'
+        period: params.get('period') || 'yearly',
+        investment: params.get('investment') || '',
+        investmentPeriod: params.get('investmentPeriod') || 'yearly'
     };
 }
 
-function updateQueryParams(salary, period) {
+function updateQueryParams(salary, period, investment, investmentPeriod) {
     const url = new URL(window.location);
     if (salary) {
         url.searchParams.set('salary', salary);
@@ -49,6 +51,13 @@ function updateQueryParams(salary, period) {
     } else {
         url.searchParams.delete('salary');
         url.searchParams.delete('period');
+    }
+    if (investment) {
+        url.searchParams.set('investment', investment);
+        url.searchParams.set('investmentPeriod', investmentPeriod);
+    } else {
+        url.searchParams.delete('investment');
+        url.searchParams.delete('investmentPeriod');
     }
     window.history.replaceState({}, '', url);
 }
@@ -112,8 +121,47 @@ function updateSalaryDisplay() {
     // Render tax breakdown bars
     renderTaxBreakdown(taxData.brackets, taxBreakdownContainer);
 
+    // Update investment calculator
+    updateInvestmentDisplay();
+}
+
+// Calculate yearly investment
+function calculateYearlyInvestment(amount, period) {
+    if (!amount || isNaN(amount) || amount <= 0) return 0;
+    return amount * SALARY_MULTIPLIERS[period];
+}
+
+// Update investment display
+function updateInvestmentDisplay() {
+    const investmentInput = document.getElementById('investmentInput');
+    const investmentPeriod = document.getElementById('investmentPeriod');
+    const yearlyInvestment = document.getElementById('yearlyInvestment');
+    const incomeAfterInvestment = document.getElementById('incomeAfterInvestment');
+
+    const salaryInput = document.getElementById('salaryInput');
+    const salaryPeriod = document.getElementById('salaryPeriod');
+
+    const investmentAmount = parseFloat(investmentInput.value) || 0;
+    const investmentPer = investmentPeriod.value;
+    const yearlyInv = calculateYearlyInvestment(investmentAmount, investmentPer);
+
+    // Get after-tax income
+    const salaryAmount = parseFloat(salaryInput.value) || 0;
+    const period = salaryPeriod.value;
+    const yearly = calculateYearlySalary(salaryAmount, period);
+    const taxData = calculateTaxBreakdown(yearly);
+    const afterTax = taxData.afterTax;
+
+    // Calculate income after investment
+    const incomeAfterInv = afterTax - yearlyInv;
+
+    yearlyInvestment.textContent = `$${yearlyInv.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    incomeAfterInvestment.textContent = `$${incomeAfterInv.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
     // Update query params
-    updateQueryParams(amount > 0 ? amount : '', period);
+    const salary = salaryAmount > 0 ? salaryAmount : '';
+    const investment = investmentAmount > 0 ? investmentAmount : '';
+    updateQueryParams(salary, period, investment, investmentPer);
 }
 
 // Render tax breakdown visualization
@@ -167,8 +215,40 @@ function initSalaryCalculator() {
     salaryInput.addEventListener('input', updateSalaryDisplay);
     salaryPeriod.addEventListener('change', updateSalaryDisplay);
 
+    // Toggle breakdown visibility
+    const toggleButton = document.getElementById('toggleBreakdown');
+    const breakdownContainer = document.getElementById('taxBreakdown');
+    const breakdownArrow = document.getElementById('breakdownArrow');
+
+    toggleButton.addEventListener('click', () => {
+        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+        toggleButton.setAttribute('aria-expanded', !isExpanded);
+        breakdownContainer.classList.toggle('hidden');
+        breakdownArrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+
     // Initial calculation
     updateSalaryDisplay();
+}
+
+// Initialize investment calculator
+function initInvestmentCalculator() {
+    const investmentInput = document.getElementById('investmentInput');
+    const investmentPeriod = document.getElementById('investmentPeriod');
+
+    // Load from query params
+    const { investment, investmentPeriod: invPeriod } = getQueryParams();
+    if (investment) {
+        investmentInput.value = investment;
+    }
+    investmentPeriod.value = invPeriod;
+
+    // Attach event listeners
+    investmentInput.addEventListener('input', updateInvestmentDisplay);
+    investmentPeriod.addEventListener('change', updateInvestmentDisplay);
+
+    // Initial calculation
+    updateInvestmentDisplay();
 }
 
 // Load header HTML
@@ -278,6 +358,7 @@ async function init() {
         await loadHeader();
         await loadMarketData();
         initSalaryCalculator();
+        initInvestmentCalculator();
         setInterval(loadMarketData, REFRESH_INTERVAL);
     } catch (error) {
         console.error('Error initializing app:', error);
