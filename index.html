@@ -3,66 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Dashboard</title>
+    <title>Financial Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 min-h-screen">
-    <!-- Header banner -->
-    <header class="bg-gray-800 shadow-lg fixed top-0 left-0 right-0 w-full z-50">
-        <div class="px-6 py-4">
-            <div class="flex items-center justify-between gap-6">
-                <!-- Instruments in a row -->
-                <div class="flex items-center justify-evenly flex-1">
-                    <!-- VDHG -->
-                    <div class="flex flex-col text-center">
-                        <h2 class="text-gray-400 text-xs font-semibold mb-1">VDHG</h2>
-                        <div id="vdhg-price" class="text-lg font-bold text-white">Loading...</div>
-                        <div id="vdhg-change" class="text-xs font-semibold">--</div>
-                    </div>
-
-                    <!-- ASX 200 -->
-                    <div class="flex flex-col text-center">
-                        <h2 class="text-gray-400 text-xs font-semibold mb-1">ASX 200</h2>
-                        <div id="asx200-price" class="text-lg font-bold text-white">Loading...</div>
-                        <div id="asx200-change" class="text-xs font-semibold">--</div>
-                    </div>
-
-                    <!-- S&P 500 -->
-                    <div class="flex flex-col text-center">
-                        <h2 class="text-gray-400 text-xs font-semibold mb-1">S&P 500</h2>
-                        <div id="sp500-price" class="text-lg font-bold text-white">Loading...</div>
-                        <div id="sp500-change" class="text-xs font-semibold">--</div>
-                    </div>
-
-                    <!-- Gold -->
-                    <div class="flex flex-col text-center">
-                        <h2 class="text-gray-400 text-xs font-semibold mb-1">Gold</h2>
-                        <div id="gold-price" class="text-lg font-bold text-white">Loading...</div>
-                        <div id="gold-change" class="text-xs font-semibold">--</div>
-                    </div>
-
-                    <!-- Bitcoin -->
-                    <div class="flex flex-col text-center">
-                        <h2 class="text-gray-400 text-xs font-semibold mb-1">Bitcoin</h2>
-                        <div id="bitcoin-price" class="text-lg font-bold text-white">Loading...</div>
-                        <div id="bitcoin-change" class="text-xs font-semibold">--</div>
-                    </div>
-                </div>
-
-                <!-- Period selector on the right -->
-                <div class="flex items-center gap-2 ml-6">
-                    <label class="text-gray-400 text-sm">Period:</label>
-                    <select id="periodSelect" class="bg-gray-700 text-white px-3 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500 text-sm">
-                        <option value="1d">1 Day</option>
-                        <option value="1w">1 Week</option>
-                        <option value="1m">1 Month</option>
-                        <option value="1y">1 Year</option>
-                        <option value="5y">5 Years</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </header>
+    <!-- Header will be loaded here -->
+    <div id="header-container"></div>
 
     <script src="app.js"></script>
 </body>
