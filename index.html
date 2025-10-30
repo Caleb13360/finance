@@ -11,10 +11,12 @@
     <div id="header-container"></div>
 
     <!-- Main content with top margin to account for fixed header -->
-    <main class="pt-24 px-6">
-        <!-- Salary Calculator Section -->
-        <section class="max-w-2xl mx-auto mb-8">
-            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+    <main class="pt-32 px-6">
+        <!-- Calculators Grid -->
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Combined Income & Investment Calculator Section -->
+            <section>
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6">
                 <h2 class="text-white text-2xl font-bold mb-6">Income Calculator</h2>
 
                 <div class="flex gap-4 items-end mb-6">
@@ -76,58 +78,156 @@
                         <p class="text-gray-400 text-center py-4">Enter an income amount to see tax breakdown</p>
                     </div>
                 </div>
+
+                <!-- Investment Section  -->
+                <div class="mt-8 pt-6 border-t border-gray-700">
+                    <div class="flex gap-4 items-end mb-6">
+                        <!-- Investment Amount Input -->
+                        <div class="flex-1">
+                            <label for="investmentInput" class="block text-gray-400 text-sm font-semibold mb-2">
+                                Investment Amount
+                            </label>
+                            <input
+                                type="number"
+                                id="investmentInput"
+                                placeholder="Enter amount"
+                                class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
+
+                        <!-- Period Selector -->
+                        <div class="flex-1">
+                            <label for="investmentPeriod" class="block text-gray-400 text-sm font-semibold mb-2">
+                                Investment Period
+                            </label>
+                            <select
+                                id="investmentPeriod"
+                                class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500"
+                            >
+                                <option value="weekly">Weekly</option>
+                                <option value="biweekly">Bi-weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Result Display -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-purple-500">
+                            <div class="text-gray-400 text-sm mb-1">Yearly Investment</div>
+                            <div id="yearlyInvestment" class="text-white text-3xl font-bold">$0.00</div>
+                        </div>
+                        <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-green-500">
+                            <div class="text-gray-400 text-sm mb-1">Yearly Income After Investment</div>
+                            <div id="incomeAfterInvestment" class="text-white text-3xl font-bold">$0.00</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Investment Calculator Section -->
-        <section class="max-w-2xl mx-auto mb-8">
-            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+            <!-- Empty Section - Ready for new content -->
+            <section>
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6">
                 <h2 class="text-white text-2xl font-bold mb-6">Investment Calculator</h2>
 
                 <div class="flex gap-4 items-end mb-6">
-                    <!-- Investment Amount Input -->
+                    <!-- Starting Amount Input -->
                     <div class="flex-1">
-                        <label for="investmentInput" class="block text-gray-400 text-sm font-semibold mb-2">
-                            Investment Amount
+                        <label for="startingAmount" class="block text-gray-400 text-sm font-semibold mb-2">
+                            Starting Amount
                         </label>
                         <input
                             type="number"
-                            id="investmentInput"
+                            id="startingAmount"
                             placeholder="Enter amount"
                             class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500"
                         />
                     </div>
 
-                    <!-- Period Selector -->
+                    <!-- Investment Type Selector -->
                     <div class="flex-1">
-                        <label for="investmentPeriod" class="block text-gray-400 text-sm font-semibold mb-2">
-                            Investment Period
+                        <label for="investmentType" class="block text-gray-400 text-sm font-semibold mb-2">
+                            Investment Type
                         </label>
                         <select
-                            id="investmentPeriod"
+                            id="investmentType"
                             class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500"
                         >
-                            <option value="weekly">Weekly</option>
-                            <option value="biweekly">Bi-weekly</option>
-                            <option value="monthly">Monthly</option>
-                            <option value="yearly">Yearly</option>
+                            <option value="spending-account">Spending Account</option>
+                            <option value="savings-account">Savings Account</option>
+                            <option value="term-deposit">Term Deposit</option>
+                            <option value="vdhg">VDHG</option>
+                            <option value="aus-market">AUS Market</option>
+                            <option value="us-market">US Market</option>
+                            <option value="gold">Gold</option>
+                            <option value="bitcoin">Bitcoin</option>
                         </select>
                     </div>
                 </div>
 
                 <!-- Result Display -->
                 <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-purple-500">
-                        <div class="text-gray-400 text-sm mb-1">Yearly Investment</div>
-                        <div id="yearlyInvestment" class="text-white text-3xl font-bold">$0.00</div>
+                    <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-yellow-500">
+                        <div class="text-gray-400 text-sm mb-1">Yearly Investment Total</div>
+                        <div id="yearlyInvestmentTotal" class="text-white text-3xl font-bold">$0.00</div>
                     </div>
                     <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-green-500">
-                        <div class="text-gray-400 text-sm mb-1">Yearly Income After Investment</div>
-                        <div id="incomeAfterInvestment" class="text-white text-3xl font-bold">$0.00</div>
+                        <div class="text-gray-400 text-sm mb-1">Yearly Investment Gain</div>
+                        <div id="yearlyInvestmentGain" class="text-white text-3xl font-bold">$0.00</div>
+                    </div>
+                </div>
+
+                <!-- Toggle Switch -->
+                <div class="flex items-center justify-center gap-3 mb-4">
+                    <span class="text-gray-400 text-sm font-semibold" id="toggleLabelLeft">Enter Years</span>
+                    <button id="calculatorToggle" class="relative inline-flex h-8 w-14 items-center rounded-full bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <span id="toggleCircle" class="inline-block h-6 w-6 transform rounded-full bg-white transition-transform translate-x-1"></span>
+                    </button>
+                    <span class="text-gray-400 text-sm font-semibold" id="toggleLabelRight">Enter Target Value</span>
+                </div>
+
+                <!-- Interactive Future Value Fields -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-blue-500">
+                        <div class="text-gray-400 text-sm mb-2">Investment Duration (Years)</div>
+                        <input
+                            type="number"
+                            id="investmentDuration"
+                            placeholder="Enter years"
+                            step="0.1"
+                            min="0"
+                            class="w-full bg-gray-600 text-white px-3 py-2 rounded border border-gray-500 focus:outline-none focus:border-blue-400 text-3xl font-bold"
+                        />
+                        <div id="durationDisplay" class="text-white text-3xl font-bold hidden">0</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-purple-500">
+                        <div class="text-gray-400 text-sm mb-2">Total Investment Value</div>
+                        <input
+                            type="number"
+                            id="futureValueInput"
+                            placeholder="Enter target value"
+                            class="w-full bg-gray-600 text-white px-3 py-2 rounded border border-gray-500 focus:outline-none focus:border-purple-400 text-3xl font-bold hidden"
+                        />
+                        <div id="futureValueDisplay" class="text-white text-3xl font-bold">$0.00</div>
+                    </div>
+                </div>
+
+                <!-- Calculated Results -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-cyan-500">
+                        <div class="text-gray-400 text-sm mb-1">Total Contributions</div>
+                        <div id="totalContributions" class="text-white text-3xl font-bold">$0.00</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-emerald-500">
+                        <div class="text-gray-400 text-sm mb-1">Total Gains</div>
+                        <div id="totalGains" class="text-white text-3xl font-bold">$0.00</div>
                     </div>
                 </div>
             </div>
         </section>
+        </div>
     </main>
 
     <script src="app.js"></script>
