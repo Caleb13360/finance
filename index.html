@@ -6,211 +6,64 @@
     <title>Market Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 min-h-screen p-6">
-    <div class="max-w-4xl mx-auto">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <h1 class="text-4xl font-bold text-white mb-4 md:mb-0">Market Dashboard</h1>
+<body class="bg-gray-900 min-h-screen">
+    <!-- Header banner -->
+    <header class="bg-gray-800 shadow-lg fixed top-0 left-0 right-0 w-full z-50">
+        <div class="px-6 py-4">
+            <div class="flex items-center justify-between gap-6">
+                <!-- Instruments in a row -->
+                <div class="flex items-center justify-evenly flex-1">
+                    <!-- VDHG -->
+                    <div class="flex flex-col text-center">
+                        <h2 class="text-gray-400 text-xs font-semibold mb-1">VDHG</h2>
+                        <div id="vdhg-price" class="text-lg font-bold text-white">Loading...</div>
+                        <div id="vdhg-change" class="text-xs font-semibold">--</div>
+                    </div>
 
-            <div class="flex items-center gap-2">
-                <label class="text-gray-400 text-sm">Period:</label>
-                <select id="periodSelect" class="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500">
-                    <option value="1d">1 Day</option>
-                    <option value="1w">1 Week</option>
-                    <option value="1m">1 Month</option>
-                    <option value="1y">1 Year</option>
-                    <option value="5y">5 Years</option>
-                </select>
+                    <!-- ASX 200 -->
+                    <div class="flex flex-col text-center">
+                        <h2 class="text-gray-400 text-xs font-semibold mb-1">ASX 200</h2>
+                        <div id="asx200-price" class="text-lg font-bold text-white">Loading...</div>
+                        <div id="asx200-change" class="text-xs font-semibold">--</div>
+                    </div>
+
+                    <!-- S&P 500 -->
+                    <div class="flex flex-col text-center">
+                        <h2 class="text-gray-400 text-xs font-semibold mb-1">S&P 500</h2>
+                        <div id="sp500-price" class="text-lg font-bold text-white">Loading...</div>
+                        <div id="sp500-change" class="text-xs font-semibold">--</div>
+                    </div>
+
+                    <!-- Gold -->
+                    <div class="flex flex-col text-center">
+                        <h2 class="text-gray-400 text-xs font-semibold mb-1">Gold</h2>
+                        <div id="gold-price" class="text-lg font-bold text-white">Loading...</div>
+                        <div id="gold-change" class="text-xs font-semibold">--</div>
+                    </div>
+
+                    <!-- Bitcoin -->
+                    <div class="flex flex-col text-center">
+                        <h2 class="text-gray-400 text-xs font-semibold mb-1">Bitcoin</h2>
+                        <div id="bitcoin-price" class="text-lg font-bold text-white">Loading...</div>
+                        <div id="bitcoin-change" class="text-xs font-semibold">--</div>
+                    </div>
+                </div>
+
+                <!-- Period selector on the right -->
+                <div class="flex items-center gap-2 ml-6">
+                    <label class="text-gray-400 text-sm">Period:</label>
+                    <select id="periodSelect" class="bg-gray-700 text-white px-3 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500 text-sm">
+                        <option value="1d">1 Day</option>
+                        <option value="1w">1 Week</option>
+                        <option value="1m">1 Month</option>
+                        <option value="1y">1 Year</option>
+                        <option value="5y">5 Years</option>
+                    </select>
+                </div>
             </div>
         </div>
+    </header>
 
-        <div class="grid gap-6 md:grid-cols-3">
-            <!-- VDHG Card -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <h2 class="text-gray-400 text-sm font-semibold mb-2">VDHG</h2>
-                <div id="vdhg-price" class="text-3xl font-bold text-white mb-2">Loading...</div>
-                <div id="vdhg-change" class="text-sm font-semibold">--</div>
-            </div>
-
-            <!-- ASX 200 Card -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <h2 class="text-gray-400 text-sm font-semibold mb-2">ASX 200</h2>
-                <div id="asx200-price" class="text-3xl font-bold text-white mb-2">Loading...</div>
-                <div id="asx200-change" class="text-sm font-semibold">--</div>
-            </div>
-
-            <!-- S&P 500 Card -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <h2 class="text-gray-400 text-sm font-semibold mb-2">S&P 500</h2>
-                <div id="sp500-price" class="text-3xl font-bold text-white mb-2">Loading...</div>
-                <div id="sp500-change" class="text-sm font-semibold">--</div>
-            </div>
-
-            <!-- Gold Card -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <h2 class="text-gray-400 text-sm font-semibold mb-2">Gold</h2>
-                <div id="gold-price" class="text-3xl font-bold text-white mb-2">Loading...</div>
-                <div id="gold-change" class="text-sm font-semibold">--</div>
-            </div>
-
-            <!-- Bitcoin Card -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <h2 class="text-gray-400 text-sm font-semibold mb-2">Bitcoin</h2>
-                <div id="bitcoin-price" class="text-3xl font-bold text-white mb-2">Loading...</div>
-                <div id="bitcoin-change" class="text-sm font-semibold">--</div>
-            </div>
-        </div>
-
-        <div class="mt-8 text-center">
-            <p class="text-gray-400 text-sm">Last updated: <span id="lastUpdated">--</span></p>
-        </div>
-    </div>
-
-    <script>
-        let currentPeriod = '1d';
-        let marketDataCache = {};
-
-        // Period select change handler
-        document.getElementById('periodSelect').addEventListener('change', (e) => {
-            currentPeriod = e.target.value;
-            updateDisplay();
-        });
-
-        // Fetch all data for a symbol across all periods
-        async function fetchAllPeriodsForSymbol(symbol) {
-            const proxyUrl = 'https://corsproxy.io/?';
-            // Fetch 5 year data which includes all other periods
-            const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=5y&interval=1d`;
-
-            try {
-                const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
-                const data = await response.json();
-
-                if (data.chart.result && data.chart.result[0]) {
-                    const result = data.chart.result[0];
-                    const timestamps = result.timestamp;
-                    const prices = result.indicators.quote[0].close;
-                    const currentPrice = result.meta.regularMarketPrice || prices[prices.length - 1];
-
-                    // Calculate start prices for each period
-                    const now = Date.now() / 1000; // Current time in seconds
-                    const periods = {
-                        '1d': findPriceAtTime(timestamps, prices, now - (1 * 24 * 60 * 60)),
-                        '1w': findPriceAtTime(timestamps, prices, now - (7 * 24 * 60 * 60)),
-                        '1m': findPriceAtTime(timestamps, prices, now - (30 * 24 * 60 * 60)),
-                        '1y': findPriceAtTime(timestamps, prices, now - (365 * 24 * 60 * 60)),
-                        '5y': prices.find(p => p !== null)
-                    };
-
-                    return {
-                        currentPrice,
-                        periods
-                    };
-                }
-            } catch (error) {
-                console.error(`Error fetching ${symbol}:`, error);
-                return null;
-            }
-        }
-
-        // Find the closest price to a given timestamp
-        function findPriceAtTime(timestamps, prices, targetTime) {
-            let closestIndex = 0;
-            let minDiff = Math.abs(timestamps[0] - targetTime);
-
-            for (let i = 1; i < timestamps.length; i++) {
-                const diff = Math.abs(timestamps[i] - targetTime);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    closestIndex = i;
-                }
-            }
-
-            // Find the first non-null price at or after this index
-            for (let i = closestIndex; i < prices.length; i++) {
-                if (prices[i] !== null) {
-                    return prices[i];
-                }
-            }
-            // If no non-null price found forward, search backward
-            for (let i = closestIndex; i >= 0; i--) {
-                if (prices[i] !== null) {
-                    return prices[i];
-                }
-            }
-            return null;
-        }
-
-        // Update display based on current period
-        function updateDisplay() {
-            const instruments = [
-                { id: 'vdhg', symbol: 'VDHG.AX' },
-                { id: 'asx200', symbol: '^AXJO' },
-                { id: 'sp500', symbol: '^GSPC' },
-                { id: 'gold', symbol: 'GOLD.AX' },
-                { id: 'bitcoin', symbol: 'BTC-AUD' }
-            ];
-
-            instruments.forEach(({ id, symbol }) => {
-                const data = marketDataCache[symbol];
-                if (!data) return;
-
-                const currentPrice = data.currentPrice;
-                const startPrice = data.periods[currentPeriod];
-
-                if (startPrice) {
-                    const change = currentPrice - startPrice;
-                    const changePercent = (change / startPrice) * 100;
-
-                    // Update price
-                    document.getElementById(`${id}-price`).textContent =
-                        currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-                    // Update change
-                    const changeElement = document.getElementById(`${id}-change`);
-                    const changeText = `${change >= 0 ? '+' : ''}${change.toFixed(2)} (${changePercent.toFixed(2)}%)`;
-                    changeElement.textContent = changeText;
-
-                    // Color based on change
-                    if (change >= 0) {
-                        changeElement.className = 'text-sm font-semibold text-green-500';
-                    } else {
-                        changeElement.className = 'text-sm font-semibold text-red-500';
-                    }
-                }
-            });
-        }
-
-        // Initial load - fetch all data in parallel
-        async function loadAllData() {
-            const timestamp = new Date().toLocaleTimeString();
-            document.getElementById('lastUpdated').textContent = timestamp;
-
-            try {
-                // Fetch all symbols in parallel
-                const [vdhgData, asx200Data, sp500Data, goldData, bitcoinData] = await Promise.all([
-                    fetchAllPeriodsForSymbol('VDHG.AX'),
-                    fetchAllPeriodsForSymbol('^AXJO'),
-                    fetchAllPeriodsForSymbol('^GSPC'),
-                    fetchAllPeriodsForSymbol('GOLD.AX'),
-                    fetchAllPeriodsForSymbol('BTC-AUD')
-                ]);
-
-                // Cache the data
-                marketDataCache['VDHG.AX'] = vdhgData;
-                marketDataCache['^AXJO'] = asx200Data;
-                marketDataCache['^GSPC'] = sp500Data;
-                marketDataCache['GOLD.AX'] = goldData;
-                marketDataCache['BTC-AUD'] = bitcoinData;
-
-                // Update the display
-                updateDisplay();
-            } catch (error) {
-                console.error('Error loading market data:', error);
-            }
-        }
-
-        // Start loading data
-        loadAllData();
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
