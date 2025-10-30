@@ -191,7 +191,7 @@ function calculateInvestmentGains(startingAmount, periodicAmount, period, invest
     };
 }
 
-// Calculate future value over multiple years with compounding
+// Calculate future value over multiple years with compounding (supports decimal years)
 function calculateFutureValue(startingAmount, periodicAmount, period, investmentType, years) {
     if (!years || years <= 0) {
         return {
@@ -207,8 +207,12 @@ function calculateFutureValue(startingAmount, periodicAmount, period, investment
     let balance = startingAmount;
     let totalContributions = startingAmount;
 
-    // For each year, calculate the growth
-    for (let year = 0; year < years; year++) {
+    // Calculate whole years and fractional year separately
+    const wholeYears = Math.floor(years);
+    const fractionalYear = years - wholeYears;
+
+    // Process complete years
+    for (let year = 0; year < wholeYears; year++) {
         // Grow the current balance by one year
         balance *= (1 + rate);
 
@@ -219,6 +223,26 @@ function calculateFutureValue(startingAmount, periodicAmount, period, investment
             const timeRemaining = (periodsPerYear - periodNum + 1) / periodsPerYear;
 
             // Add the contribution and grow it for the remainder of the year
+            const contributionGrowth = periodicAmount * Math.pow(1 + rate, timeRemaining);
+            balance += contributionGrowth;
+            totalContributions += periodicAmount;
+        }
+    }
+
+    // Process fractional year if present
+    if (fractionalYear > 0) {
+        // Grow existing balance for the fractional year
+        balance *= Math.pow(1 + rate, fractionalYear);
+
+        // Add contributions for the fractional year
+        const periodsInFractionalYear = periodsPerYear * fractionalYear;
+        const completePeriodsInFractionalYear = Math.floor(periodsInFractionalYear);
+
+        for (let periodNum = 1; periodNum <= completePeriodsInFractionalYear; periodNum++) {
+            // Time remaining in the fractional year when this contribution is made
+            const timeRemaining = (periodsInFractionalYear - periodNum + 1) / periodsPerYear;
+
+            // Add the contribution and grow it for the remainder of the fractional year
             const contributionGrowth = periodicAmount * Math.pow(1 + rate, timeRemaining);
             balance += contributionGrowth;
             totalContributions += periodicAmount;
@@ -251,7 +275,7 @@ function calculateRequiredDuration(startingAmount, periodicAmount, period, inves
     // Binary search for the duration
     let low = 0;
     let high = 100; // Start with max 100 years
-    const tolerance = 0.01; // Tolerance for convergence
+    const tolerance = 0.001; // Tolerance for convergence (0.001 years = ~0.4 days)
 
     // First check if 100 years is enough
     let testResult = calculateFutureValue(startingAmount, periodicAmount, period, investmentType, high);
@@ -265,11 +289,13 @@ function calculateRequiredDuration(startingAmount, periodicAmount, period, inves
     }
 
     // Binary search
-    while (high - low > tolerance) {
+    let iterations = 0;
+    const maxIterations = 100;
+    while (high - low > tolerance && iterations < maxIterations) {
         const mid = (low + high) / 2;
         const result = calculateFutureValue(startingAmount, periodicAmount, period, investmentType, mid);
 
-        if (Math.abs(result.futureValue - targetValue) < 1) {
+        if (Math.abs(result.futureValue - targetValue) < 0.01) {
             return mid;
         }
 
@@ -278,6 +304,8 @@ function calculateRequiredDuration(startingAmount, periodicAmount, period, inves
         } else {
             high = mid;
         }
+
+        iterations++;
     }
 
     return (low + high) / 2;
