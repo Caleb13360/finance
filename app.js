@@ -15,6 +15,162 @@ const SECONDS_IN_DAY = 24 * 60 * 60;
 let currentPeriod = '1d';
 const marketDataCache = {};
 
+// Salary calculation multipliers
+const SALARY_MULTIPLIERS = {
+    weekly: 52,
+    biweekly: 26,
+    monthly: 12,
+    yearly: 1
+};
+
+// Australian tax brackets (2024-2025)
+const TAX_BRACKETS = [
+    { min: 0, max: 18200, rate: 0, baseAmount: 0 },
+    { min: 18201, max: 45000, rate: 0.16, baseAmount: 0 },
+    { min: 45001, max: 135000, rate: 0.30, baseAmount: 4288 },
+    { min: 135001, max: 190000, rate: 0.37, baseAmount: 31288 },
+    { min: 190001, max: Infinity, rate: 0.45, baseAmount: 51638 }
+];
+
+// Query parameter utilities
+function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        salary: params.get('salary') || '',
+        period: params.get('period') || 'yearly'
+    };
+}
+
+function updateQueryParams(salary, period) {
+    const url = new URL(window.location);
+    if (salary) {
+        url.searchParams.set('salary', salary);
+        url.searchParams.set('period', period);
+    } else {
+        url.searchParams.delete('salary');
+        url.searchParams.delete('period');
+    }
+    window.history.replaceState({}, '', url);
+}
+
+// Calculate yearly salary
+function calculateYearlySalary(amount, period) {
+    if (!amount || isNaN(amount) || amount <= 0) return 0;
+    return amount * SALARY_MULTIPLIERS[period];
+}
+
+// Calculate tax breakdown by bracket
+function calculateTaxBreakdown(yearlySalary) {
+    if (yearlySalary <= 0) {
+        return { totalTax: 0, afterTax: 0, brackets: [] };
+    }
+
+    let totalTax = 0;
+    const brackets = [];
+
+    for (const bracket of TAX_BRACKETS) {
+        if (yearlySalary <= bracket.min) break;
+
+        const incomeInBracket = Math.min(yearlySalary, bracket.max) - bracket.min;
+        const taxInBracket = incomeInBracket * bracket.rate;
+
+        totalTax += taxInBracket;
+
+        brackets.push({
+            min: bracket.min,
+            max: bracket.max === Infinity ? null : bracket.max,
+            rate: bracket.rate,
+            incomeInBracket,
+            taxInBracket,
+            salaryInBracket: incomeInBracket - taxInBracket
+        });
+    }
+
+    return {
+        totalTax,
+        afterTax: yearlySalary - totalTax,
+        brackets
+    };
+}
+
+// Update salary display
+function updateSalaryDisplay() {
+    const salaryInput = document.getElementById('salaryInput');
+    const salaryPeriod = document.getElementById('salaryPeriod');
+    const yearlySalary = document.getElementById('yearlySalary');
+    const afterTaxSalary = document.getElementById('afterTaxSalary');
+    const taxBreakdownContainer = document.getElementById('taxBreakdown');
+
+    const amount = parseFloat(salaryInput.value) || 0;
+    const period = salaryPeriod.value;
+    const yearly = calculateYearlySalary(amount, period);
+    const taxData = calculateTaxBreakdown(yearly);
+
+    yearlySalary.textContent = `$${yearly.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    afterTaxSalary.textContent = `$${taxData.afterTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    // Render tax breakdown bars
+    renderTaxBreakdown(taxData.brackets, taxBreakdownContainer);
+
+    // Update query params
+    updateQueryParams(amount > 0 ? amount : '', period);
+}
+
+// Render tax breakdown visualization
+function renderTaxBreakdown(brackets, container) {
+    if (brackets.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-center py-4">Enter an income amount to see tax breakdown</p>';
+        return;
+    }
+
+    container.innerHTML = brackets.map(bracket => {
+        const totalInBracket = bracket.incomeInBracket;
+        const salaryPercent = (bracket.salaryInBracket / totalInBracket * 100).toFixed(1);
+        const taxPercent = (bracket.taxInBracket / totalInBracket * 100).toFixed(1);
+
+        const bracketLabel = bracket.max
+            ? `$${bracket.min.toLocaleString()} – $${bracket.max.toLocaleString()}`
+            : `$${bracket.min.toLocaleString()}+`;
+
+        return `
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-300 text-sm font-medium">${bracketLabel} (${(bracket.rate * 100).toFixed(0)}% rate)</span>
+                    <span class="text-gray-400 text-xs">Total: $${totalInBracket.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+                <div class="flex h-10 rounded-lg overflow-hidden border border-gray-600">
+                    <div class="bg-green-500 flex items-center justify-center text-white text-xs font-semibold" style="width: ${salaryPercent}%">
+                        <span class="px-2">$${bracket.salaryInBracket.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                    </div>
+                    ${bracket.rate > 0 ? `<div class="bg-red-500 flex items-center justify-center text-white text-xs font-semibold" style="width: ${taxPercent}%">
+                        <span class="px-2">$${bracket.taxInBracket.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                    </div>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Initialize salary calculator
+function initSalaryCalculator() {
+    const salaryInput = document.getElementById('salaryInput');
+    const salaryPeriod = document.getElementById('salaryPeriod');
+
+    // Load from query params
+    const { salary, period } = getQueryParams();
+    if (salary) {
+        salaryInput.value = salary;
+    }
+    salaryPeriod.value = period;
+
+    // Attach event listeners
+    salaryInput.addEventListener('input', updateSalaryDisplay);
+    salaryPeriod.addEventListener('change', updateSalaryDisplay);
+
+    // Initial calculation
+    updateSalaryDisplay();
+}
+
 // Load header HTML
 async function loadHeader() {
     const response = await fetch('header.html');
@@ -121,6 +277,7 @@ async function init() {
     try {
         await loadHeader();
         await loadMarketData();
+        initSalaryCalculator();
         setInterval(loadMarketData, REFRESH_INTERVAL);
     } catch (error) {
         console.error('Error initializing app:', error);
