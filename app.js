@@ -103,7 +103,7 @@ function calculateTaxBreakdown(yearlySalary) {
 }
 
 // Update salary display
-function updateSalaryDisplay() {
+function updateSalaryDisplay(triggerInvestmentUpdate = true) {
     const salaryInput = document.getElementById('salaryInput');
     const salaryPeriod = document.getElementById('salaryPeriod');
     const yearlySalary = document.getElementById('yearlySalary');
@@ -121,8 +121,10 @@ function updateSalaryDisplay() {
     // Render tax breakdown bars
     renderTaxBreakdown(taxData.brackets, taxBreakdownContainer);
 
-    // Update investment calculator
-    updateInvestmentDisplay();
+    // Update investment calculator (only if not during initialization)
+    if (triggerInvestmentUpdate) {
+        updateInvestmentDisplay();
+    }
 }
 
 // Calculate yearly investment
@@ -227,25 +229,25 @@ function initSalaryCalculator() {
         breakdownArrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
     });
 
-    // Initial calculation
-    updateSalaryDisplay();
+    // Initial calculation (don't trigger investment update yet)
+    updateSalaryDisplay(false);
 }
 
 // Initialize investment calculator
 function initInvestmentCalculator() {
     const investmentInput = document.getElementById('investmentInput');
-    const investmentPeriod = document.getElementById('investmentPeriod');
+    const investmentPeriodSelect = document.getElementById('investmentPeriod');
 
     // Load from query params
-    const { investment, investmentPeriod: invPeriod } = getQueryParams();
+    const { investment, investmentPeriod } = getQueryParams();
     if (investment) {
         investmentInput.value = investment;
     }
-    investmentPeriod.value = invPeriod;
+    investmentPeriodSelect.value = investmentPeriod;
 
     // Attach event listeners
     investmentInput.addEventListener('input', updateInvestmentDisplay);
-    investmentPeriod.addEventListener('change', updateInvestmentDisplay);
+    investmentPeriodSelect.addEventListener('change', updateInvestmentDisplay);
 
     // Initial calculation
     updateInvestmentDisplay();
